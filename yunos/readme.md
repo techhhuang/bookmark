@@ -1,0 +1,1 @@
+arm-linux-gnueabihf-gcc vmegl.c -I /home/saic/build/dra7xx-evm/usr/include/ -L /home/saic/build/dra7xx-evm/usr/lib/ -lwayland-client -lEGL -lpvr_wlegl  -Wl,-rpath-link,/home/saic/build/dra7xx-evm/usr/lib/
