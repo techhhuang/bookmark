@@ -4,8 +4,8 @@
 #include <wayland-client.h>
 #include <wayland-client-protocol.h>
 #include <wayland-server-protocol.h>
-#include <wayland-egl.h>
 #include <weston/WindowManager-client-protocol.h>
+#include <wayland-egl.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <errno.h>
@@ -22,8 +22,8 @@ struct wl_callback *frame_callback;
 
 void *shm_data;
 
-int WIDTH = 960;
-int HEIGHT = 480;
+int WIDTH = 480;
+int HEIGHT = 256;
 
 static void handle_ping(void *data, struct wl_shell_surface *shell_surface,
                         uint32_t serial) {
@@ -267,16 +267,17 @@ int main(int argc, char **argv) {
   }
 
   // shell_surface = wl_shell_get_shell_surface(shell, surface);
-  shell_surface = wl_shell_wm_get_shell_surface(shell, surface, 2054, 0, 0, 0);
+  shell_surface = wl_shell_wm_get_shell_surface(shell, surface, 2055, 0, 0, 0);
+
   if (shell_surface == NULL) {
     fprintf(stderr, "Can't create shell surface\n");
     exit(1);
   } else {
     fprintf(stderr, "Created shell surface\n");
   }
-  wl_shell_surface_set_visibility(shell_surface, 1);
-  wl_shell_surface_set_window_geometry(shell_surface, 0, 0, 1, 1);
   wl_shell_surface_set_toplevel(shell_surface);
+  wl_shell_surface_set_visibility(shell_surface, 1);
+  wl_shell_surface_set_window_geometry(shell_surface, 0, 0, 800, 600);
 
   wl_shell_surface_add_listener(shell_surface, &shell_surface_listener, NULL);
 

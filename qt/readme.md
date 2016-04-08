@@ -59,3 +59,4 @@ export QT_QPA_PLATFORM_PLUGIN_PATH=/home/qt5/plugins/platforms
 export QT_QPA_PLATFORM=wayland
 
 
+

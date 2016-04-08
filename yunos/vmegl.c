@@ -157,13 +157,12 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Created surface\n");
   }
 
-  shell_surface = wl_shell_get_shell_surface(shell, surface);
-  // shell_surface = wl_shell_wm_get_shell_surface(shell, surface, 2054, 0, 0,
-  // 0);
+  // shell_surface = wl_shell_get_shell_surface(shell, surface);
+  shell_surface = wl_shell_wm_get_shell_surface(shell, surface, 2054, 0, 0, 0);
 
   wl_shell_surface_set_visibility(shell_surface, 1);
   wl_shell_surface_set_toplevel(shell_surface);
-  wl_shell_surface_set_window_geometry(shell_surface, 0, 0, 1, 1);
+  wl_shell_surface_set_window_geometry(shell_surface, 300, 300, 800, 600);
 
   create_opaque_region();
   init_egl();
