@@ -64,11 +64,11 @@ static void create_window() {
     fprintf(stderr, "Made current failed\n");
   }
 
-  /*
-  glClearColor(1.0, 1.0, 0.0, 1.0);
+  
+  glClearColor(1.0, 1.0, 0.0, 0.2);
   glClear(GL_COLOR_BUFFER_BIT);
   glFlush();
-  */
+  
 
   if (eglSwapBuffers(egl_display, egl_surface)) {
     fprintf(stderr, "Swapped buffers\n");
@@ -164,7 +164,7 @@ int main(int argc, char **argv) {
   wl_shell_surface_set_toplevel(shell_surface);
   wl_shell_surface_set_window_geometry(shell_surface, 300, 300, 800, 600);
 
-  create_opaque_region();
+  //create_opaque_region();
   init_egl();
   create_window();
 
