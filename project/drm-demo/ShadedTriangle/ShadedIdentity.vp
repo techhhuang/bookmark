@@ -1,0 +1,21 @@
+// The ShadedIdentity Shader
+// Vertex Shader
+// Richard S. Wright Jr.
+// OpenGL SuperBible
+#version 130
+
+in vec4 vColor;
+in vec4 vVertex;
+
+out vec4 vVaryingColor;
+
+uniform mat4 m =mat4(0.881f,0.5f,0.0f,0.0f,
+                     -0.5f,0.881f,0.0f,0.0f,
+                      0.0f,0.0f,1.0f,0.0f,
+                      0.0f,0.0f,0.0f,1.0f);
+
+void main(void) 
+    { 
+    vVaryingColor = vColor;
+    gl_Position = vVertex;
+    }

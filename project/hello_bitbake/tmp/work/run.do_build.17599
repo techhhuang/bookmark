@@ -1,0 +1,7 @@
+def do_build(d):
+    bb.plain("**************************");
+    bb.plain("Hello World!");
+    bb.plain("**************************");
+
+do_build(d)
+

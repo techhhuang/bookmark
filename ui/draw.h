@@ -1,138 +1,55 @@
-#include<GLES2/gl2.h>
-#include <stdio.h>
-#include <assert.h>
-
-static const char *vert_shader_text =
-    "uniform mat4 rotation;\n"
-    "attribute vec4 position;\n"
-    "attribute vec4 color;\n"
-    "varying vec4 v_color;\n"
-    "void main() {\n"
-    "  gl_Position = rotation*position;\n"
-    "  v_color = color;\n"
-    "}\n";
-
-static const char *frag_shader_text =
-    "precision mediump float;\n"
-    "varying vec4 v_color;\n"
-    "void main() {\n"
-    "  gl_FragColor = v_color;\n"
-    "}\n";
-
+#include<glesHelper.h>
+#define WIDTH 800
+#define HEIGHT 600
+#define TX(x)  (x*2.0/WIDTH -1)
+#define TY(y)  (1-y*2.0/HEIGHT)
+#define TW(w)  (w*2.0/WIDTH)
+#define TH(h)  (h*2.0/HEIGHT)
 void draw();
-void drawLine();
-
-
-GLuint uniform_rotaion;
-
-
-GLuint create_shader(const char *source, GLenum shader_type)
-{
-    GLuint shader;
-    GLint status;
-
-    shader = glCreateShader(shader_type);
-    assert(shader != 0);
-
-    glShaderSource(shader, 1, (const char **) &source, NULL);
-    glCompileShader(shader);
-
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-    if (!status) {
-        char log[1000];
-        GLsizei len;
-        glGetShaderInfoLog(shader, 1000, &len, log);
-        printf("Error: compiling %s: %*s\n",
-            shader_type == GL_VERTEX_SHADER ? "vertex" : "fragment",
-            len, log);
-        exit(1);
-    }
-
-    return shader;
-}
-void init_gl()
-{
-    printf("init gl start\n");
-    GLuint frag, vert;
-    GLint status;
-    GLuint program;
-
-    frag = create_shader(frag_shader_text, GL_FRAGMENT_SHADER);
-    vert = create_shader(vert_shader_text, GL_VERTEX_SHADER);
-
-    program = glCreateProgram();
-    glAttachShader(program, frag);
-    glAttachShader(program, vert);
-    glLinkProgram(program);
-
-    glGetProgramiv(program, GL_LINK_STATUS, &status);
-    if (!status) {
-        char log[1000];
-        GLsizei len;
-        glGetProgramInfoLog(program, 1000, &len, log);
-        printf("Error: linking:\n%*s\n", len, log);
-        exit(1);
-    }
-
-    glUseProgram(program);
-
-    glBindAttribLocation(program, 0, "position");
-    glBindAttribLocation(program, 1, "color");
-
-    glLinkProgram(program);
-
-    uniform_rotaion =glGetUniformLocation(program, "rotation");
-
-}
-
+void drawLine(int x, int y, int x1, int y1);
+void drawComplex();
+void drawRect(int x, int y, int w, int h);
 
 void draw()
 {
-    glViewport(0, 0, 800, 600);
-    //glClearColor(0.0,0.0, 0.5, 0.5);
+    init_gl();
+    glViewport(0, 0, WIDTH, HEIGHT);
+    glClearColor(0.0,0.0, 0.5, 0.5);
     glClear(GL_COLOR_BUFFER_BIT);
-    drawLine();
-//    glFlush();
+    drawLine(0,0,400,300);
+    drawLine(400,300,800,0);
+    drawRect(0,0,100,100);
+    drawRect(400,300,50,50);
+    
 }
 
-
-void drawLine()
+void drawLine(int x, int y, int x1, int y1)
 {
-    static int count=1;
-    printf("draw line start\n");
-    static const GLfloat verts[4][2] = {
-        { -0.5, -0.5 },
-        {  0.5, -0.5 },
-        {  0,    0.5 },
-        {  0.5,  0.5 }
+    printf("draw line:%d %d %d %d\n",x,y,x1,y1);
+    GLfloat verts[]={
+        TX(x),TY(y),
+        TX(x1),TY(y1)
     };
-    static const GLfloat colors[3][3] = {
-        { 1, 0, 0 },
-        { 0, 1, 0 },
-        { 0, 0, 1 }
-    };
-    GLfloat angle;
-    GLfloat rotation[4][4] = {
-        { 1, 0, 0, 0 },
-        { 0, 1, 0, 0 },
-        { 0, 0, 1, 0 },
-        { 0, 0, 0, 1 }
-    };
-    angle = count % 360 * M_PI / 180.0;
-    printf("rotation angle is:%f\n",angle);
-    rotation[0][0] =  cos(angle);
-    rotation[0][2] =  sin(angle);
-    rotation[2][0] = -sin(angle);
-    rotation[2][2] =  cos(angle);
-
-    glUniformMatrix4fv(uniform_rotaion, 1, GL_FALSE,
-               (GLfloat *) rotation);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, verts);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors);
     glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
+
+    glDrawArrays(GL_LINES, 0, 2);
+    glDisableVertexAttribArray(0);
+}
+
+void drawRect(int x, int y, int w, int h)
+{
+    printf("draw rect:%d %d %d %d\n",x,y,w,h);
+    GLfloat verts[] = {
+         TX(x) , TY(y),
+         TX(x) , TY(y) - TH(h),
+         TX(x) + TW(w), TY(y) - TH(h),
+         TX(x) + TW(w), TY(y)
+    };
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, verts);
+    glEnableVertexAttribArray(0);
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-    count +=1;
+    glDisableVertexAttribArray(0);
 }

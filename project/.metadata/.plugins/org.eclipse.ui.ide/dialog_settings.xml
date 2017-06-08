@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+		<item value="/home/pvkei/source/weston"/>
+		<item value="/home/pvkei/doc/smartui"/>
+		<item value="/home/pvkei/Downloads/JUCE"/>
+		<item value="/home/pvkei/Downloads/JUCE/modules"/>
+	</list>
+</section>

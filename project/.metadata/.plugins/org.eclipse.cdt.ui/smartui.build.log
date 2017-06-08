@@ -1,0 +1,6 @@
+15:35:55 **** Incremental Build of configuration Default for project smartui ****
+make all 
+g++ app.cpp src/Visual.cpp src/Window.cpp src/Button.cpp src/Application.cpp -lglut -lGL -lGLU -I ./include -g
+
+15:35:56 Build Finished (took 875ms)
+

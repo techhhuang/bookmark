@@ -69,16 +69,15 @@ static void create_window()
     } else {
         fprintf(stderr, "Made current failed\n");
     }
-
-
     // begin to draw
-    // draw();
+     draw();
 
-    // if (eglSwapBuffers(egl_display, egl_surface)) {
-    //     fprintf(stderr, "Swapped buffers\n");
-    // } else {
-    //     fprintf(stderr, "Swapped buffers failed\n");
-    // }
+
+     if (eglSwapBuffers(egl_display, egl_surface)) {
+         fprintf(stderr, "Swapped buffers\n");
+     } else {
+         fprintf(stderr, "Swapped buffers failed\n");
+     }
 }
 
 static void init_egl()
@@ -177,15 +176,9 @@ int main(int argc, char **argv)
 //    create_opaque_region();
     init_egl();
     create_window();
-    init_gl();
 
-    while (1) {
-        draw();
-        if (eglSwapBuffers(egl_display, egl_surface)) {
-            fprintf(stderr, "Swapped buffers\n");
-       } else {
-        fprintf(stderr, "Swapped buffers failed\n");
-    }
+    while (wl_display_dispatch(display) != -1) {
+        ;
     }
 
     wl_display_disconnect(display);
