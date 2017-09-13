@@ -7,9 +7,66 @@
 #include <wayland-client-protocol.h>
 #include <wayland-egl.h>
 #include <EGL/egl.h>
-#include <draw.h>
+#include <sys/time.h>
 
+#include <weston/WindowManager-client-protocol.h>
 
+#include<GLES2/gl2.h>
+
+#define NANOVG_GLES2_IMPLEMENTATION   // Use GL2 implementation.
+
+#include "nanovg.h"
+#include "nanovg_gl.h"
+#include "nanovg_gl_utils.h"
+#include "demo.h"
+#include "perf.h"
+
+#define WIDTH 960
+#define HEIGHT 1280
+
+double getTimeNow(){
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    double time = tv.tv_sec*1000   + tv.tv_usec/1000 ;
+    return time;
+}
+
+struct NVGcontext* vg;
+DemoData ddata;
+PerfGraph fps;
+
+double prevt,nowt,t,t0=0,dt;
+
+void draw(){
+    nowt = getTimeNow();
+    t= nowt - prevt;
+    dt = t - t0;
+    t0 = t;
+     printf("time:%f  dt: %f\n",t/1000,dt/1000);
+    updateGraph(&fps, dt/1000.0);
+    glViewport(0, 0, WIDTH, HEIGHT);
+
+    glClearColor(0.3f, 0.3f, 0.32f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+
+    nvgBeginFrame(vg, WIDTH, HEIGHT, 1);
+    renderDemo(vg, 30,30, WIDTH,HEIGHT, t/1000.0, 0, &ddata);
+    renderGraph(vg, 5,5, &fps);
+
+    // nvgBeginPath(vg);
+    // //nvgRect(vg, 100,100, 120,30);
+    // nvgCircle(vg, 120,120, 50);
+    // nvgPathWinding(vg, NVG_HOLE);   // Mark circle as a hole.
+    // nvgFillColor(vg, nvgRGBA(255,192,0,255));
+    // nvgFill(vg);
+
+    nvgEndFrame(vg);
+}
 struct wl_display *display = NULL;
 struct wl_compositor *compositor = NULL;
 struct wl_surface *surface;
@@ -50,13 +107,13 @@ static const struct wl_registry_listener registry_listener = {
 
 static void create_window()
 {
-    egl_window = wl_egl_window_create(surface, 800, 600);
+    egl_window = wl_egl_window_create(surface, WIDTH, HEIGHT);
     assert(egl_window != EGL_NO_SURFACE);
 
     egl_surface = eglCreateWindowSurface(egl_display, egl_conf, egl_window, NULL);
     assert(eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context));
 
-    //eglSwapInterval(egl_display, 0);
+    eglSwapInterval(egl_display, 0);
 
 }
 
@@ -66,8 +123,8 @@ static void init_egl()
     EGLConfig *configs;
     int i;
     EGLint config_attribs[] = {EGL_SURFACE_TYPE, EGL_WINDOW_BIT, EGL_RED_SIZE, 8,
-                               EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8,
-                               EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT, EGL_NONE
+                               EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8 ,EGL_ALPHA_SIZE,8,EGL_STENCIL_SIZE,1,
+                               EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, EGL_NONE
                               };
 
     static const EGLint context_attribs[] = {EGL_CONTEXT_CLIENT_VERSION, 2,
@@ -92,6 +149,8 @@ static void init_egl()
         printf("Buffer size for config %d is %d\n", i, size);
         eglGetConfigAttrib(egl_display, configs[i], EGL_RED_SIZE, &size);
         printf("Red size for config %d is %d\n", i, size);
+        eglGetConfigAttrib(egl_display, configs[i], EGL_ALPHA_SIZE, &size);
+        printf("Alpha size for config %d is %d\n", i, size);
 
         // just choose the first one
         egl_conf = configs[i];
@@ -120,13 +179,25 @@ int main(int argc, char **argv)
     surface = wl_compositor_create_surface(compositor);
     assert(surface);
 
-    shell_surface = wl_shell_get_shell_surface(shell, surface);
+    //shell_surface = wl_shell_get_shell_surface(shell, surface);
+    shell_surface = wl_shell_wm_get_shell_surface(shell, surface, 2054, 0, 0, 0);
+  
+    wl_shell_surface_set_visibility(shell_surface, 1);
     wl_shell_surface_set_toplevel(shell_surface);
+    wl_shell_surface_set_window_geometry(shell_surface, 0, 0, WIDTH, HEIGHT);
 
 
+    
     init_egl();
     create_window();
-    init_gl();
+    // init_gl();
+    
+    prevt= getTimeNow();
+    initGraph(&fps, GRAPH_RENDER_FPS, "Frame Time");
+    vg = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES|NVG_DEBUG);
+
+    assert(loadDemoData(vg, &ddata) != -1);
+   
 
     while ( 1 ) {
        printf("looping \n");

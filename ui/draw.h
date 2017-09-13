@@ -1,4 +1,5 @@
 #include<glesHelper.h>
+
 #define WIDTH 800
 #define HEIGHT 600
 #define TX(x)  (x*2.0/WIDTH -1)
@@ -12,7 +13,6 @@ void drawRect(int x, int y, int w, int h);
 
 void draw()
 {
-    init_gl();
     glViewport(0, 0, WIDTH, HEIGHT);
     glClearColor(0.0,0.0, 0.5, 0.5);
     glClear(GL_COLOR_BUFFER_BIT);
