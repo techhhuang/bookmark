@@ -1,0 +1,46 @@
+  #version 100 
+precision mediump float;   
+float border=0.01;
+float circle_radius=0.1;
+vec4 circle_color = vec4(1.0, 1.0, 1.0, 1.0);
+vec2 circle_center = vec2(0.5, 0.5);
+varying vec4 v_color;
+void main (void)
+
+  if(uv.x>0.98 &&uv.x<1.0){
+    gl_FragColor = circle_color;
+  }
+  else{
+    uv -= circle_center;
+    float dist =  length(uv);
+    if ( (dist > (circle_radius+border)) || (dist < (circle_radius-border)) )
+      gl_FragColor = v_color;
+    else 
+      gl_FragColor = circle_color;
+  }
+
+
+
+
+
+####################simple sin line
+
+
+#version 100 
+precision mediump float;   
+uniform float time;
+vec4 line_color = vec4(1.0, 1.0, 1.0, 1.0);
+
+varying vec4 v_color;
+void main (void)
+{
+  vec2 uv = 2.0*vec2(gl_FragCoord.xy/vec2(800.0,600.0)) -1.0;
+  float y = 0.2*sin(20.0*uv.x+time/50.0);
+  if(abs(y-uv.y)<0.001){
+    gl_FragColor=line_color;
+  }else
+  {
+    gl_FragColor=v_color;
+  }
+
+}

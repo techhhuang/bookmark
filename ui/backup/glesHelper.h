@@ -21,14 +21,18 @@ static const char *frag_shader_text =
 
 static const char *vert_simple_shader_text =
     "attribute vec4 position;\n"
+    "attribute vec4 color;\n"
+    "varying vec4 v_color;\n"
     "void main() {\n"
     "  gl_Position = position;\n"
+    "  v_color = color;\n"
     "}\n";
 
 static const char *frag_simple_shader_text =
     "precision mediump float;\n"
+    "varying vec4 v_color;\n"
     "void main() {\n"
-    "  gl_FragColor = vec4(1.0,0,0,0);\n"
+    "  gl_FragColor = v_color;\n"
     "}\n";
 
 GLuint uniform_rotaion;
@@ -85,11 +89,11 @@ void init_gl()
     glUseProgram(program);
 
     glBindAttribLocation(program, 0, "position");
-    //glBindAttribLocation(program, 1, "color");
+    glBindAttribLocation(program, 1, "color");
 
     glLinkProgram(program);
 
-    //uniform_rotaion =glGetUniformLocation(program, "rotation");
+    uniform_rotaion =glGetUniformLocation(program, "rotation");
 
     printf("init gl end\n");
 }
