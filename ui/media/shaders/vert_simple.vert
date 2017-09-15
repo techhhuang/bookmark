@@ -1,4 +1,5 @@
 #version 100
+precision mediump float;
 uniform float time;
 attribute vec4 position;
 attribute vec4 color;
