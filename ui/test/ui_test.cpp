@@ -5,9 +5,7 @@ using namespace SmartUI;
 
 int main(int argc, char** argv) {
   Application* app = new Application();
-  SmartUI::Window* win = new SmartUI::Window();
-  win->setWidth(600);
-  win->setHeight(600);
+  SmartUI::Window* win = new SmartUI::Window(600, 600);
   win->setBgColor(Util::getRandomColor());
 
   View* v1 = new View();

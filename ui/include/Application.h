@@ -8,10 +8,7 @@ class Application {
   Application() { smart_platform_init(); }
   Application(int argc, char** argv) { smart_platform_init(); }
   ~Application();
-  int exec() {
-    smart_platform_swap();
-    smart_platform_loop();
-  }
+  int exec() { smart_platform_loop(); }
 };
 }
 #endif

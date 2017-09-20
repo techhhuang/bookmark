@@ -19,6 +19,7 @@ class Color : public Object {
   uint8 g() { return mG; }
   uint8 b() { return mB; }
   uint8 a() { return mA; }
+  void setA(uint8 a) { mA = a; }
   static Color white() { return Color(255, 255, 255, 255); }
 
  protected:

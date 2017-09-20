@@ -7,7 +7,7 @@ extern "C" {
 
 void smart_platform_init();
 void smart_platform_create_window(void *data);
-void smart_platform_swap();
+void smart_platform_swap(void *data);
 void smart_platform_loop();
 #ifdef __cplusplus
 };

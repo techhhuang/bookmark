@@ -3,6 +3,8 @@
 
 #include <Context.h>
 #include <Object.h>
+#include <Point.h>
+
 #include <vector>
 
 namespace SmartUI {
@@ -24,9 +26,9 @@ class View : Object {
 
   int height() { return mHeight; }
 
-  int x() { return mX; }
+  int x() { return mPosition.x(); }
 
-  int y() { return mY; }
+  int y() { return mPosition.y(); }
 
   void setWidth(int width) { mWidth = width; }
 
@@ -38,8 +40,8 @@ class View : Object {
   }
 
   void setPosition(int x, int y) {
-    mX = x;
-    mY = y;
+    mPosition.setX(x);
+    mPosition.setY(y);
   }
 
   Color bgColor() { return mBgColor; }
@@ -56,12 +58,23 @@ class View : Object {
 
   virtual void draw(Context *ctx);
 
+  View *findView(Point<int> p);
+  virtual bool contains(Point<int> p) {
+    Point<int> offset = p - mPosition;
+    return offset.x() >= 0 && offset.x() <= mWidth && offset.y() >= 0 &&
+           offset.y() <= mHeight;
+  }
+
+  // event
+  void mouseButtonEvent(int button, int state, unsigned int time);
+
  protected:
-  int mX, mY, mWidth, mHeight;
+  int mWidth, mHeight;
+  Point<int> mPosition;
   View *mParent;
   std::vector<View *> mChildren;
-  bool mVisible, mCliping;
-  Color mBgColor;
+  bool mVisible, mCliping, mPressed;
+  Color mBgColor, mBgColorPressed;
 };
 }
 

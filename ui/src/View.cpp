@@ -4,13 +4,14 @@
 namespace SmartUI {
 
 View::View()
-    : mX(0),
-      mY(0),
+    : mPosition(0, 0),
       mWidth(0),
       mHeight(0),
       mBgColor(Color(255, 255, 255, 255)),
+      mBgColorPressed(Color(255, 0, 255, 100)),
       mVisible(true),
-      mCliping(true) {}
+      mCliping(true),
+      mPressed(false) {}
 
 void View::addChild(View* child) {
   TRACE("View addChild...\n");
@@ -22,8 +23,12 @@ void View::draw(Context* ctx) {
   TRACE("View draw self...\n");
   // draw view self, draw border just for test
   ctx->beginPath();
-  ctx->rect(mX, mY, mWidth, mHeight);
-  ctx->fillColor(mBgColor);
+  ctx->rect(x(), y(), mWidth, mHeight);
+  if (mPressed) {
+    ctx->fillColor(mBgColorPressed);
+  } else {
+    ctx->fillColor(mBgColor);
+  }
   ctx->stroke();
   ctx->fill();
 
@@ -32,7 +37,7 @@ void View::draw(Context* ctx) {
   }
   TRACE("View draw children:%ld\n", mChildren.size());
   ctx->save();
-  ctx->translate(mX, mY);
+  ctx->translate(x(), y());
 
   for (auto child : mChildren) {
     if (child->mVisible) {
@@ -46,5 +51,24 @@ void View::draw(Context* ctx) {
   }
 
   ctx->restore();
+}
+
+View* View::findView(Point<int> p) {
+  TRACE("find at:%d %d\n", p.x(), p.y());
+  for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it) {
+    View* child = *it;
+    if (child->visible() && child->contains(p - mPosition))
+      return child->findView(p - mPosition);
+  }
+  return contains(p) ? this : nullptr;
+}
+
+void View::mouseButtonEvent(int button, int state, unsigned int time) {
+  TRACE("View mouseButtonEvent:%d %d %u\n", button, state, time);
+  if (state == 0) {
+    mPressed = false;
+  } else {
+    mPressed = true;
+  }
 }
 }

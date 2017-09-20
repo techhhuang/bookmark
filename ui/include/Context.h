@@ -12,7 +12,7 @@ class Context : Object {
  public:
   Context();
 
-  void open();
+  void open(int w, int h, float ratio);
   void close();
 
   void save();

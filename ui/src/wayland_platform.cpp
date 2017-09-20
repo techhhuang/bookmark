@@ -74,6 +74,8 @@ static void pointer_handle_button(void *data, struct wl_pointer *wl_pointer,
 
   // if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED)
   //   wl_shell_surface_move(shell_surface, seat, serial);
+
+  focusWindow->onMouseButtonEvent(button - BTN_LEFT, state, time);
 }
 
 static void pointer_handle_axis(void *data, struct wl_pointer *wl_pointer,
@@ -146,16 +148,17 @@ static const struct wl_registry_listener registry_listener = {
     global_registry_handler, global_registry_remover};
 
 static void create_window(void *data) {
-  printf("create native window\n");
-  egl_window = wl_egl_window_create(surface, WIDTH, HEIGHT);
+  SmartUI::Window *win = (SmartUI::Window *)data;
+  printf("create native window:%d %d\n", win->width(), win->height());
+  egl_window = wl_egl_window_create(surface, win->width(), win->height());
   assert(egl_window != EGL_NO_SURFACE);
 
   egl_surface = eglCreateWindowSurface(egl_display, egl_conf,
                                        (EGLNativeWindowType)egl_window, NULL);
   assert(eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context));
 
-  glViewport(0, 0, 800, 600);
-  glClearColor(0.3f, 0.3f, 0.32f, 1.0f);
+  glViewport(0, 0, win->width(), win->height());
+  glClearColor(1, 1, 1, 1);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

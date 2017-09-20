@@ -13,9 +13,9 @@ Context::Context() {
   TRACE("context construct...\n");
   ctx = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 }
-void Context::open() {
+void Context::open(int w, int h, float ratio) {
   TRACE("context open...\n");
-  nvgBeginFrame(ctx, 800, 600, 8.0 / 6.0);
+  nvgBeginFrame(ctx, w, h, ratio);
   nvgBeginPath(ctx);
 }
 void Context::close() {
@@ -31,7 +31,7 @@ void Context::save() {
   nvgSave(ctx);
 }
 void Context::restore() {
-  TRACE("context restore...\n");
+  // TRACE("context restore...\n");
   nvgRestore(ctx);
 }
 void Context::rect(int x, int y, int w, int h) {
