@@ -1,7 +1,7 @@
 #include<stdio.h>
 
 
-void visible()
+__attribute__((visibility("default"))) void visible()
 {
     printf("symbol will be visible\n");
 }
