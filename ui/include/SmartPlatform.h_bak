@@ -74,6 +74,8 @@ static void init_egl() {
                              8,
                              EGL_RENDERABLE_TYPE,
                              EGL_OPENGL_ES2_BIT,
+                             EGL_STENCIL_SIZE,
+                             1,
                              EGL_NONE};
 
   static const EGLint context_attribs[] = {EGL_CONTEXT_CLIENT_VERSION, 2,
