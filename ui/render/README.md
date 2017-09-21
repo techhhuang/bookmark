@@ -1,1 +1,0 @@
-g++ main.c -lwayland-client -lwayland-egl -lGLESv2 -lEGL -o main_client -I ..  -L.. -lnanovg

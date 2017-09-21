@@ -27,7 +27,7 @@ struct wl_shell_surface *shell_surface;
 // input devices
 struct wl_seat *seat;
 struct wl_pointer *pointer;
-// struct wl_touch *touch;
+struct wl_touch *touch;
 // struct wl_keyboard *keyboard;
 
 EGLDisplay egl_display;
@@ -44,6 +44,51 @@ SmartUI::Window *focusWindow;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifdef YUNOS
+
+#include <weston/WindowManager-client-protocol.h>
+
+// *******************touch handle *******************************
+static void touch_handle_down(void *data, struct wl_touch *wl_touch,
+                              uint32_t serial, uint32_t time,
+                              struct wl_surface *surface, uint32_t device_id,
+                              int32_t id, wl_fixed_t x, wl_fixed_t y,
+                              wl_fixed_t sx, wl_fixed_t sy) {
+  focusWindow = (SmartUI::Window *)wl_surface_get_user_data(surface);
+  float xf = wl_fixed_to_double(x);
+  float yf = wl_fixed_to_double(y);
+  // printf("touch down:%d %d %f %f \n", serial, id, xf, yf);
+  focusWindow->onTouchDown(id, xf, yf, time);
+}
+
+static void touch_handle_up(void *data, struct wl_touch *wl_touch,
+                            uint32_t serial, uint32_t time, uint32_t device_id,
+                            int32_t id) {
+  // printf("touch up:%d %d \n", serial, id);
+  focusWindow->onTouchUp(id, 0, 0, time);
+}
+
+static void touch_handle_motion(void *data, struct wl_touch *wl_touch,
+                                uint32_t time, uint32_t device_id, int32_t id,
+                                wl_fixed_t x, wl_fixed_t y, wl_fixed_t sx,
+                                wl_fixed_t sy) {
+  float xf = wl_fixed_to_double(x);
+  float yf = wl_fixed_to_double(y);
+  // printf("touch move:%d %f %f \n", id, xf, yf);
+  focusWindow->onTouchMove(id, xf, yf, time);
+}
+
+static void touch_handle_frame(void *data, struct wl_touch *wl_touch) {}
+
+static void touch_handle_cancel(void *data, struct wl_touch *wl_touch) {}
+
+static const struct wl_touch_listener touch_listener = {
+    touch_handle_down,  touch_handle_up,     touch_handle_motion,
+    touch_handle_frame, touch_handle_cancel,
+};
+
+#else
 
 // *******************pointer handle ********************************
 static void pointer_handle_enter(void *data, struct wl_pointer *pointer,
@@ -88,9 +133,20 @@ static const struct wl_pointer_listener pointer_listener = {
     pointer_handle_enter,  pointer_handle_leave, pointer_handle_motion,
     pointer_handle_button, pointer_handle_axis,
 };
+#endif
 
 static void seat_handle_capabilities(void *data, struct wl_seat *seat,
                                      uint32_t caps) {
+#ifdef YUNOS
+  if ((caps & WL_SEAT_CAPABILITY_TOUCH) && !touch) {
+    touch = wl_seat_get_touch(seat);
+    wl_touch_set_user_data(touch, data);
+    wl_touch_add_listener(touch, &touch_listener, data);
+  } else if (!(caps & WL_SEAT_CAPABILITY_TOUCH) && touch) {
+    wl_touch_destroy(touch);
+    touch = NULL;
+  }
+#else
   if ((caps & WL_SEAT_CAPABILITY_POINTER) && !pointer) {
     pointer = wl_seat_get_pointer(seat);
     wl_pointer_add_listener(pointer, &pointer_listener, NULL);
@@ -98,6 +154,7 @@ static void seat_handle_capabilities(void *data, struct wl_seat *seat,
     wl_pointer_destroy(pointer);
     pointer = NULL;
   }
+#endif
 }
 
 static const struct wl_seat_listener seat_listener = {
@@ -233,7 +290,13 @@ void smart_platform_create_window(void *data) {
   surface = wl_compositor_create_surface(compositor);
   wl_surface_set_user_data(surface, data);
   assert(surface);
+#ifdef YUNOS
+  shell_surface = wl_shell_wm_get_shell_surface(shell, surface, 2054, 0, 0, 0);
+  wl_shell_surface_set_visibility(shell_surface, 1);
+// wl_shell_surface_set_window_geometry(shell_surface, 0, 0, WIDTH, HEIGHT);
+#else
   shell_surface = wl_shell_get_shell_surface(shell, surface);
+#endif
   wl_shell_surface_set_toplevel(shell_surface);
   wl_shell_surface_add_listener(shell_surface, &shell_surface_listener, data);
   init_egl(data);

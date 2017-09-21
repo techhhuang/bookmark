@@ -10,24 +10,24 @@
 namespace SmartUI {
 
 Context::Context() {
-  TRACE("context construct...\n");
+  // TRACE("context construct...\n");
   ctx = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 }
 void Context::open(int w, int h, float ratio) {
-  TRACE("context open...\n");
+  // TRACE("context open...\n");
   nvgBeginFrame(ctx, w, h, ratio);
   nvgBeginPath(ctx);
 }
 void Context::close() {
-  TRACE("context close...\n");
+  // TRACE("context close...\n");
   nvgEndFrame(ctx);
 }
 void Context::beginPath() {
-  TRACE("context begin path...\n");
+  // TRACE("context begin path...\n");
   nvgBeginPath(ctx);
 }
 void Context::save() {
-  TRACE("context save...\n");
+  // TRACE("context save...\n");
   nvgSave(ctx);
 }
 void Context::restore() {
@@ -39,11 +39,11 @@ void Context::rect(int x, int y, int w, int h) {
   nvgRect(ctx, x, y, w, h);
 }
 void Context::stroke() {
-  TRACE("context stroke...\n");
+  // TRACE("context stroke...\n");
   nvgStroke(ctx);
 }
 void Context::fill() {
-  TRACE("context fill...\n");
+  // TRACE("context fill...\n");
   nvgFill(ctx);
 }
 

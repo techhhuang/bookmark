@@ -54,7 +54,8 @@ void View::draw(Context* ctx) {
 }
 
 View* View::findView(Point<int> p) {
-  TRACE("find at:%d %d\n", p.x(), p.y());
+  TRACE("find at:%d %d view:%d %d %d %d children:%d \n", p.x(), p.y(),
+        mPosition.x(), mPosition.y(), mWidth, mHeight, mChildren.size());
   for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it) {
     View* child = *it;
     if (child->visible() && child->contains(p - mPosition))
@@ -62,13 +63,21 @@ View* View::findView(Point<int> p) {
   }
   return contains(p) ? this : nullptr;
 }
-
-void View::mouseButtonEvent(int button, int state, unsigned int time) {
-  TRACE("View mouseButtonEvent:%d %d %u\n", button, state, time);
-  if (state == 0) {
-    mPressed = false;
-  } else {
-    mPressed = true;
-  }
+void View::onTouchDown(int id, int x, int y, unsigned int time) {
+  TRACE("view onTouchDown:%d %d %d %u\n", id, x, y, time);
 }
+void View::onTouchUp(int id, int x, int y, unsigned int time) {
+  TRACE("view onTouchUp:%d %d %d %u\n", id, x, y, time);
+}
+void View::onTouchMove(int id, int x, int y, unsigned int time) {
+  TRACE("view onTouchMove:%d %d %d %u\n", id, x, y, time);
+}
+// void View::mouseButtonEvent(int button, int state, unsigned int time) {
+//   TRACE("View mouseButtonEvent:%d %d %u\n", button, state, time);
+//   if (state == 0) {
+//     mPressed = false;
+//   } else {
+//     mPressed = true;
+//   }
+// }
 }

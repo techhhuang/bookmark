@@ -56,6 +56,9 @@ class View : Object {
 
   void setCliping(bool cliping) { mCliping = cliping; }
 
+  bool pressed() { return mPressed; }
+  void setPressed(bool pressed) { mPressed = pressed; }
+
   virtual void draw(Context *ctx);
 
   View *findView(Point<int> p);
@@ -67,6 +70,11 @@ class View : Object {
 
   // event
   void mouseButtonEvent(int button, int state, unsigned int time);
+  void onMouseMove(int x, int y);
+  void onMouseButtonEvent(int button, int state, unsigned int time);
+  virtual void onTouchMove(int id, int x, int y, unsigned int time);
+  virtual void onTouchUp(int id, int x, int y, unsigned int time);
+  virtual void onTouchDown(int id, int x, int y, unsigned int time);
 
  protected:
   int mWidth, mHeight;

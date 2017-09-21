@@ -5,7 +5,7 @@ using namespace SmartUI;
 
 int main(int argc, char** argv) {
   Application* app = new Application();
-  SmartUI::Window* win = new SmartUI::Window(600, 600);
+  SmartUI::Window* win = new SmartUI::Window(800, 800);
   win->setBgColor(Util::getRandomColor());
 
   View* v1 = new View();
@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
   v4->setPosition(150, 50);
   v4->setSize(100, 100);
   v4->setBgColor(Util::getRandomColor());
-  v4->setVisible(false);
+  v4->setVisible(true);
 
   v1->addChild(v3);
   v1->addChild(v2);
