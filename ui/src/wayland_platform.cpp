@@ -59,14 +59,14 @@ static void touch_handle_down(void *data, struct wl_touch *wl_touch,
   float xf = wl_fixed_to_double(x);
   float yf = wl_fixed_to_double(y);
   // printf("touch down:%d %d %f %f \n", serial, id, xf, yf);
-  focusWindow->onTouchDown(id, xf, yf, time);
+  focusWindow->touchDownCallback(id, xf, yf, time);
 }
 
 static void touch_handle_up(void *data, struct wl_touch *wl_touch,
                             uint32_t serial, uint32_t time, uint32_t device_id,
                             int32_t id) {
   // printf("touch up:%d %d \n", serial, id);
-  focusWindow->onTouchUp(id, 0, 0, time);
+  focusWindow->touchUpCallback(id, 0, 0, time);
 }
 
 static void touch_handle_motion(void *data, struct wl_touch *wl_touch,
@@ -76,7 +76,7 @@ static void touch_handle_motion(void *data, struct wl_touch *wl_touch,
   float xf = wl_fixed_to_double(x);
   float yf = wl_fixed_to_double(y);
   // printf("touch move:%d %f %f \n", id, xf, yf);
-  focusWindow->onTouchMove(id, xf, yf, time);
+  focusWindow->touchMoveCallback(id, xf, yf, time);
 }
 
 static void touch_handle_frame(void *data, struct wl_touch *wl_touch) {}
@@ -109,7 +109,8 @@ static void pointer_handle_motion(void *data, struct wl_pointer *pointer,
                                   uint32_t time, wl_fixed_t sx, wl_fixed_t sy) {
   // printf("Pointer moved at %f %f\n", wl_fixed_to_double(sx),
   //        wl_fixed_to_double(sy));
-  focusWindow->onMouseMove(wl_fixed_to_double(sx), wl_fixed_to_double(sy));
+  focusWindow->mouseMoveCallback(wl_fixed_to_double(sx),
+                                 wl_fixed_to_double(sy));
 }
 
 static void pointer_handle_button(void *data, struct wl_pointer *wl_pointer,
@@ -120,7 +121,7 @@ static void pointer_handle_button(void *data, struct wl_pointer *wl_pointer,
   // if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED)
   //   wl_shell_surface_move(shell_surface, seat, serial);
 
-  focusWindow->onMouseButtonEvent(button - BTN_LEFT, state, time);
+  focusWindow->mouseButtonEventCallback(button - BTN_LEFT, state, time);
 }
 
 static void pointer_handle_axis(void *data, struct wl_pointer *wl_pointer,

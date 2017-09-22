@@ -11,11 +11,11 @@ class Window : public View {
   void update();
   virtual void draw(Context *ctx) override;
 
-  virtual void onMouseMove(int x, int y);
-  virtual void onMouseButtonEvent(int button, int state, unsigned int time);
-  virtual void onTouchMove(int id, int x, int y, unsigned int time) override;
-  virtual void onTouchUp(int id, int x, int y, unsigned int time) override;
-  virtual void onTouchDown(int id, int x, int y, unsigned int time) override;
+  void mouseMoveCallback(int x, int y);
+  void mouseButtonEventCallback(int button, int state, unsigned int time);
+  void touchMoveCallback(int id, int x, int y, unsigned int time);
+  void touchUpCallback(int id, int x, int y, unsigned int time);
+  void touchDownCallback(int id, int x, int y, unsigned int time);
 
  protected:
   Context *mContext;

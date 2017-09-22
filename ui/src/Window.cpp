@@ -29,13 +29,14 @@ void Window::update() {
   smart_platform_swap(this);
 }
 
-void Window::onMouseMove(int x, int y) {
+void Window::mouseMoveCallback(int x, int y) {
   // TRACE("window onMouseMove:%d %d\n", x, y);
   mMousePos.setX(x);
   mMousePos.setY(y);
 }
-void Window::onMouseButtonEvent(int button, int state, unsigned int time) {
-  TRACE("window onMouseButtonEvent:%d %d %u\n", button, state, time);
+void Window::mouseButtonEventCallback(int button, int state,
+                                      unsigned int time) {
+  TRACE("window mouseButtonEventCallback:%d %d %u\n", button, state, time);
   View* v = findView(mMousePos);
   if (v) {
     TRACE("find view:%d %d %d %d\n", v->x(), v->y(), v->width(), v->height());
@@ -43,8 +44,8 @@ void Window::onMouseButtonEvent(int button, int state, unsigned int time) {
     update();
   }
 }
-void Window::onTouchDown(int id, int x, int y, unsigned int time) {
-  TRACE("window onTouchDown:%d %d %d %u\n", id, x, y, time);
+void Window::touchDownCallback(int id, int x, int y, unsigned int time) {
+  TRACE("window touchDownCallback:%d %d %d %u\n", id, x, y, time);
   View* v = findView(Point<int>(x, y));
   if (v) {
     if (mFocusView == nullptr) {
@@ -54,16 +55,16 @@ void Window::onTouchDown(int id, int x, int y, unsigned int time) {
     }
   }
 }
-void Window::onTouchUp(int id, int x, int y, unsigned int time) {
-  TRACE("window onTouchUp:%d %d %d %u\n", id, x, y, time);
+void Window::touchUpCallback(int id, int x, int y, unsigned int time) {
+  TRACE("window touchUpCallback:%d %d %d %u\n", id, x, y, time);
   if (mFocusView != nullptr) {
     mFocusView->setPressed(false);
     update();
     mFocusView = nullptr;
   }
 }
-void Window::onTouchMove(int id, int x, int y, unsigned int time) {
-  TRACE("window onTouchMove:%d %d %d %u\n", id, x, y, time);
+void Window::touchMoveCallback(int id, int x, int y, unsigned int time) {
+  TRACE("window touchMoveCallback:%d %d %d %u\n", id, x, y, time);
 }
 //***********************************************************
 }
