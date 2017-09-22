@@ -29,21 +29,20 @@ void Window::update() {
   smart_platform_swap(this);
 }
 
-// void Window::onMouseMove(int x, int y) {
-//   // TRACE("window onMouseMove:%d %d\n", x, y);
-//   mMousePos.setX(x);
-//   mMousePos.setY(y);
-// }
-// void Window::onMouseButtonEvent(int button, int state, unsigned int time) {
-//   TRACE("window onMouseButtonEvent:%d %d %u\n", button, state, time);
-//   View* v = findView(mMousePos);
-//   if (v) {
-//     TRACE("find view:%d %d %d %d\n", v->x(), v->y(), v->width(),
-//     v->height());
-//     v->mouseButtonEvent(button, state, time);
-//     update();
-//   }
-// }
+void Window::onMouseMove(int x, int y) {
+  // TRACE("window onMouseMove:%d %d\n", x, y);
+  mMousePos.setX(x);
+  mMousePos.setY(y);
+}
+void Window::onMouseButtonEvent(int button, int state, unsigned int time) {
+  TRACE("window onMouseButtonEvent:%d %d %u\n", button, state, time);
+  View* v = findView(mMousePos);
+  if (v) {
+    TRACE("find view:%d %d %d %d\n", v->x(), v->y(), v->width(), v->height());
+    v->onMouseButtonEvent(button, state, time);
+    update();
+  }
+}
 void Window::onTouchDown(int id, int x, int y, unsigned int time) {
   TRACE("window onTouchDown:%d %d %d %u\n", id, x, y, time);
   View* v = findView(Point<int>(x, y));

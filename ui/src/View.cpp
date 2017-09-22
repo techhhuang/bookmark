@@ -13,13 +13,13 @@ View::View()
       mCliping(true),
       mPressed(false) {}
 
-void View::addChild(View* child) {
+void View::addChild(View *child) {
   TRACE("View addChild...\n");
   mChildren.push_back(child);
   child->setParent(this);
 }
 
-void View::draw(Context* ctx) {
+void View::draw(Context *ctx) {
   TRACE("View draw self...\n");
   // draw view self, draw border just for test
   ctx->beginPath();
@@ -53,16 +53,26 @@ void View::draw(Context* ctx) {
   ctx->restore();
 }
 
-View* View::findView(Point<int> p) {
+View *View::findView(Point<int> p) {
   TRACE("find at:%d %d view:%d %d %d %d children:%d \n", p.x(), p.y(),
-        mPosition.x(), mPosition.y(), mWidth, mHeight, mChildren.size());
+        mPosition.x(), mPosition.y(), mWidth, mHeight, (int)mChildren.size());
   for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it) {
-    View* child = *it;
+    View *child = *it;
     if (child->visible() && child->contains(p - mPosition))
       return child->findView(p - mPosition);
   }
   return contains(p) ? this : nullptr;
 }
+
+void View::onMouseMove(int x, int y) {}
+void View::onMouseButtonEvent(int button, int state, unsigned int time) {
+  if (state == 0) {
+    mPressed = false;
+  } else {
+    mPressed = true;
+  }
+}
+
 void View::onTouchDown(int id, int x, int y, unsigned int time) {
   TRACE("view onTouchDown:%d %d %d %u\n", id, x, y, time);
 }
@@ -72,12 +82,4 @@ void View::onTouchUp(int id, int x, int y, unsigned int time) {
 void View::onTouchMove(int id, int x, int y, unsigned int time) {
   TRACE("view onTouchMove:%d %d %d %u\n", id, x, y, time);
 }
-// void View::mouseButtonEvent(int button, int state, unsigned int time) {
-//   TRACE("View mouseButtonEvent:%d %d %u\n", button, state, time);
-//   if (state == 0) {
-//     mPressed = false;
-//   } else {
-//     mPressed = true;
-//   }
-// }
 }
